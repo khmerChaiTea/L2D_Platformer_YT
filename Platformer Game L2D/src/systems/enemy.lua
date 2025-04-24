@@ -35,9 +35,7 @@ function enemy.new(x, y)
     e.physics.shape   = love.physics.newRectangleShape(e.width * 0.4, e.height * 0.75)
     e.physics.fixture = love.physics.newFixture(e.physics.body, e.physics.shape)
     e.physics.body:setMass(25)
-
-    -- Tag just this fixture as an enemy
-    e.physics.fixture:setUserData({ type="enemy", ref=e })
+    e.physics.fixture:setUserData({ type = "enemy", ref = e })
 
     table.insert(activeEnemies, e)
     return e
@@ -97,29 +95,29 @@ end
 
 function enemy.beginContact(a, b, collision)
     if not (a and b) then return end
-    local aData = a.getUserData  and a:getUserData() or {}
-    local bData = b.getUserData  and b:getUserData() or {}
+    local aData = a:getUserData() or {}
+    local bData = b:getUserData() or {}
 
-    local function isEnemy(d) return d.type=="enemy" end
-    local function isSolid(d) return d.type=="solid" end
+    local function isEnemy(d) return d.type == "enemy" end
+    local function isPlayer(d) return d.type == "player" end
+    local function isWall(d)   return d.type == "wall"   end
 
     if isEnemy(aData) then
         local e = aData.ref
-        if b == player.physics.fixture then
+        if isPlayer(bData) then
             player:takeDamage(e.damage)
             e:incrementRage()
         end
-        if isSolid(bData) then
+        if isWall(bData) then
             e:flipDirection()
         end
-
     elseif isEnemy(bData) then
         local e = bData.ref
-        if a == player.physics.fixture then
+        if isPlayer(aData) then
             player:takeDamage(e.damage)
             e:incrementRage()
         end
-        if isSolid(aData) then
+        if isWall(aData) then
             e:flipDirection()
         end
     end
