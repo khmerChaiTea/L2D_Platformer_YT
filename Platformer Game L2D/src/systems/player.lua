@@ -70,6 +70,14 @@ function player:resetPosition()
     self.physics.body:setPosition(self.startX, self.startY)
 end
 
+function player:getPosition()
+    return self.x, self.y
+end
+
+function player:applyImpulse(x, y)
+    self.physics.body:applyLinearImpulse(x, y)
+end
+
 function player:tintRed()
     self.color.green = 0
     self.color.blue =0
